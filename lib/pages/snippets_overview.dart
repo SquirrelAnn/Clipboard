@@ -24,7 +24,7 @@ class _SnippetsOverviewState extends State<SnippetsOverview> {
       appBar: AppBar(
         title: Text(
           widget.title,
-          style: CustomDarkTheme.darkTheme.textTheme.headline4,
+          style: CustomDarkTheme.darkTheme.textTheme.headlineMedium,
         ),
       ),
       body: Column(children: [
