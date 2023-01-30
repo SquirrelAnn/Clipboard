@@ -27,7 +27,7 @@ class _CategoriesOverviewState extends State<CategoriesOverview> {
 
     return Scaffold(
         body: Row(children: [
-          Flexible(
+          Expanded(
             flex: 1,
             child: ListView.builder(
                 controller: controller,
@@ -67,11 +67,10 @@ class _CategoriesOverviewState extends State<CategoriesOverview> {
                   }
                 }),
           ),
-          const Flexible(
-              child: VerticalDivider(
+          const VerticalDivider(
             color: Color.fromARGB(255, 134, 35, 226),
-          )),
-          Flexible(
+          ),
+          Expanded(
             flex: 3,
             child: Container(
               child: getSnippets(controller2),
