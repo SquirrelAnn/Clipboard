@@ -16,9 +16,8 @@ class Category {
     List<String> snippets = List<String>.from(snippetsJson);
     id = json['id'];
     name = json['name'];
-    this.snippets = snippets; //json['snippets'];
+    this.snippets = snippets;
   }
 
-  Map<String, dynamic> toJson() =>
-      {'id': id, 'name': name, 'snippets': snippets};
+  Map<String, dynamic> toJson() => {'id': id, 'name': name, 'snippets': snippets};
 }
