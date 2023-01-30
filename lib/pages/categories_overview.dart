@@ -143,6 +143,9 @@ class _CategoriesOverviewState extends State<CategoriesOverview> {
                     },
                     icon: const Icon(Icons.delete),
                   ),
+                  Container(
+                    width: 70,
+                  ),
                 ]),
               ]);
             } else {
