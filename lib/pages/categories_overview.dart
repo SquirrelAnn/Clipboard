@@ -163,17 +163,44 @@ class _CategoriesOverviewState extends State<CategoriesOverview> {
                     flex: 2,
                     child: Padding(
                       padding: const EdgeInsets.only(top: 4, right: 10),
-                      child: TextButton(
-                        child: RichText(
-                          text: TextSpan(
-                            text:
-                                "${widget.categories[catIndex].snippets[index].snippetTitle}: ${widget.categories[catIndex].snippets[index].snippetText}",
-                          ),
-                        ),
-                        onPressed: () {
-                          Clipboard.setData(
-                              ClipboardData(text: widget.categories[catIndex].snippets[index].snippetText));
+                      child: MouseRegion(
+                        onHover: (PointerHoverEvent event) {
+                          setState(() {
+                            hoveredSnippetIndex = index; // Track the hovered snippet
+                          });
                         },
+                        onExit: (PointerExitEvent event) {
+                          setState(() {
+                            hoveredSnippetIndex = -1;
+                          });
+                        },
+                        child: TextButton(
+                          style: ButtonStyle(
+                            backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+                              if (states.contains(WidgetState.hovered)) {
+                                return CustomDarkTheme.darkTheme.cardColor; // Hover background color
+                              }
+                              return CustomDarkTheme.darkTheme.textButtonTheme.style?.backgroundColor
+                                      ?.resolve(states) ??
+                                  Colors.transparent;
+                            }),
+                            foregroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+                              return CustomDarkTheme.darkTheme.textButtonTheme.style?.foregroundColor
+                                      ?.resolve(states) ??
+                                  Colors.transparent;
+                            }),
+                          ),
+                          child: RichText(
+                            text: TextSpan(
+                              text:
+                                  "${widget.categories[catIndex].snippets[index].snippetTitle}: ${widget.categories[catIndex].snippets[index].snippetText}",
+                            ),
+                          ),
+                          onPressed: () {
+                            Clipboard.setData(
+                                ClipboardData(text: widget.categories[catIndex].snippets[index].snippetText));
+                          },
+                        ),
                       ),
                     ),
                   ),

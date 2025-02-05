@@ -36,12 +36,12 @@ class CustomDarkTheme {
           buttonColor: DarkCustomColors.lightPurple),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
-          foregroundColor: MaterialStateProperty.all<Color>(DarkCustomColors.darkestPurple),
-          backgroundColor: MaterialStateProperty.all<Color>(DarkCustomColors.lightPurple),
-          overlayColor: MaterialStateProperty.resolveWith<Color>(
-            (Set<MaterialState> states) {
-              if (states.contains(MaterialState.hovered)) return DarkCustomColors.purple.withOpacity(0.04);
-              if (states.contains(MaterialState.focused) || states.contains(MaterialState.pressed)) {
+          foregroundColor: WidgetStateProperty.all<Color>(DarkCustomColors.darkestPurple),
+          backgroundColor: WidgetStateProperty.all<Color>(DarkCustomColors.lightPurple),
+          overlayColor: WidgetStateProperty.resolveWith<Color>(
+            (Set<WidgetState> states) {
+              if (states.contains(WidgetState.hovered)) return DarkCustomColors.purple.withOpacity(0.04);
+              if (states.contains(WidgetState.focused) || states.contains(WidgetState.pressed)) {
                 return DarkCustomColors.purple.withOpacity(0.12);
               }
               return DarkCustomColors.purple; // Defer to the widget's default.
@@ -52,13 +52,13 @@ class CustomDarkTheme {
       textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
           textStyle:
-              MaterialStateProperty.all<TextStyle>(TextStyle(fontSize: 12.0, color: DarkCustomColors.darkestPurple)),
-          foregroundColor: MaterialStateProperty.all<Color>(DarkCustomColors.darkestPurple),
-          backgroundColor: MaterialStateProperty.all<Color>(DarkCustomColors.lightPurple),
-          overlayColor: MaterialStateProperty.resolveWith<Color>(
-            (Set<MaterialState> states) {
-              if (states.contains(MaterialState.hovered)) return DarkCustomColors.purple.withOpacity(0.04);
-              if (states.contains(MaterialState.focused) || states.contains(MaterialState.pressed)) {
+              WidgetStateProperty.all<TextStyle>(TextStyle(fontSize: 12.0, color: DarkCustomColors.darkestPurple)),
+          foregroundColor: WidgetStateProperty.all<Color>(DarkCustomColors.darkestPurple),
+          backgroundColor: WidgetStateProperty.all<Color>(DarkCustomColors.lightPurple),
+          overlayColor: WidgetStateProperty.resolveWith<Color>(
+            (Set<WidgetState> states) {
+              if (states.contains(WidgetState.hovered)) return DarkCustomColors.purple.withOpacity(0.04);
+              if (states.contains(WidgetState.focused) || states.contains(WidgetState.pressed)) {
                 return DarkCustomColors.purple;
               }
               return DarkCustomColors.purple; // Defer to the widget's default.
@@ -84,9 +84,9 @@ class CustomDarkTheme {
         unselectedLabelStyle: TextStyle(fontSize: 18.0, color: DarkCustomColors.darkestPurple),
       ),
       checkboxTheme: CheckboxThemeData(
-        fillColor: MaterialStateColor.resolveWith(
+        fillColor: WidgetStateColor.resolveWith(
           (states) {
-            if (states.contains(MaterialState.selected)) {
+            if (states.contains(WidgetState.selected)) {
               return DarkCustomColors.midpurple; // the color when checkbox is selected;
             }
             return DarkCustomColors.midpurple; //the color when checkbox is unselected;

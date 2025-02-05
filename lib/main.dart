@@ -65,8 +65,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> saveCategories() async {
-  await categoriesRepository.saveCategories();
-  //_categoriesFuture = categoriesRepository.readCategoryDatabase(); // Refresh the Future
-  setState(() {}); // Trigger a rebuild
-}
+    await categoriesRepository.saveCategories();
+    //_categoriesFuture = categoriesRepository.readCategoryDatabase(); // Refresh the Future
+    setState(() {}); // Trigger a rebuild
+  }
 }
