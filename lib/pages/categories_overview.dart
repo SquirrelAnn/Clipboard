@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import '../theme/dark_theme.dart';
 import '../theme/light_theme.dart';
 
+import 'package:uuid/uuid.dart';
+
 class CategoriesOverview extends StatefulWidget {
   const CategoriesOverview({Key? key, required this.categories, required this.saveCategories}) : super(key: key);
 
@@ -96,10 +98,10 @@ class _CategoriesOverviewState extends State<CategoriesOverview> {
   }
 
   showAlertDialogSnippet() {
-    AlertWidgets.showNumTxtDlg("Add new snippet", setValueSnippet, context);
+    AlertWidgets.showNumTxtDlgSnippet("Add new snippet", setValueSnippet, context);
   }
 
-  setValueSnippet(String val) {
+  setValueSnippet(Snippet val) {
     widget.categories[catIndex].snippets.add(val);
     widget.saveCategories();
     setState(() {});
@@ -128,11 +130,13 @@ class _CategoriesOverviewState extends State<CategoriesOverview> {
                       child: TextButton(
                         child: RichText(
                           text: TextSpan(
-                            text: widget.categories[catIndex].snippets[index],
+                            text:
+                                "${widget.categories[catIndex].snippets[index].snippetTitle}: ${widget.categories[catIndex].snippets[index].snippetText}",
                           ),
                         ),
                         onPressed: () {
-                          Clipboard.setData(ClipboardData(text: widget.categories[catIndex].snippets[index]));
+                          Clipboard.setData(
+                              ClipboardData(text: widget.categories[catIndex].snippets[index].snippetText));
                         },
                       ),
                     ),
@@ -163,8 +167,10 @@ class _CategoriesOverviewState extends State<CategoriesOverview> {
 
   setValue(String val) {
     if (val.isNotEmpty) {
-      List<String> testSnippets = [];
-      Category category = Category(val, testSnippets);
+      List<Snippet> testSnippets = [];
+      var uuid = const Uuid();
+      var v1 = uuid.v1();
+      Category category = Category(id: v1, name: val, snippets: testSnippets);
       widget.categories.add(category);
       widget.saveCategories();
     }

@@ -4,15 +4,24 @@ import 'dart:io';
 import 'package:clipboard/models/category.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'package:uuid/uuid.dart';
+
 class CategoriesRepository {
   readCategoryDatabase() async {
     var file = await _localFile;
 
     if (!file.existsSync()) {
       List<Category> cats = <Category>[];
-      List<String> testSnippets = [];
-      testSnippets.add("snippet text");
-      Category category = Category("Category", testSnippets);
+      List<Snippet> testSnippets = [];
+      var uuid = const Uuid();
+      var v1 = uuid.v1();
+      Snippet snippet =
+          Snippet(id: v1, snippetText: "snippet text", snippetTitle: "snippet title"); // Named parameters!
+      testSnippets.add(snippet);
+      var cuuid = const Uuid();
+      var cv1 = cuuid.v1();
+      Category category = Category(id: cv1, name: "Category", snippets: testSnippets); // Named parameters!
+
       cats.add(category);
       String jsonTags = jsonEncode(cats);
       await file.writeAsString(jsonTags);
@@ -46,10 +55,8 @@ class CategoriesRepository {
   }
 
   static readJson(File file) async {
-    final String response = await file.readAsString();
-    final map = await json.decode(response);
-    categories = (json.decode(response) as List)
-        .map((i) => Category.fromJson(i))
-        .toList();
+    final String jsonString = await file.readAsString();
+    List<dynamic> jsonList = jsonDecode(jsonString);
+    List<Category> categories = jsonList.map((json) => Category.fromJson(json)).toList();
   }
 }

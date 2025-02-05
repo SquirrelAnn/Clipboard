@@ -7,7 +7,7 @@ class CustomLightTheme {
     //1
     return ThemeData(
       //2
-      backgroundColor: DarkCustomColors.lightPurple,
+      // backgroundColor: DarkCustomColors.lightPurple,
       primaryColor: DarkCustomColors.purple,
       unselectedWidgetColor: DarkCustomColors.darkPurple,
       scaffoldBackgroundColor: DarkCustomColors.white,
@@ -72,16 +72,16 @@ class CustomLightTheme {
       ),
       dialogTheme: DialogTheme(backgroundColor: DarkCustomColors.darkPurple),
       textTheme: TextTheme(
-        headline2: TextStyle(fontSize: 27.0, color: DarkCustomColors.darkestPurple),
-        bodyText1: TextStyle(fontSize: 20, color: DarkCustomColors.darkestPurple),
-        bodyText2: TextStyle(fontSize: 12.0, color: DarkCustomColors.darkestPurple),
-        headline3: TextStyle(fontSize: 20, color: DarkCustomColors.lighterPurple),
-        subtitle2: TextStyle(fontSize: 18.0, color: DarkCustomColors.darkestPurple),
-        headline4: TextStyle(fontSize: 17.0, color: DarkCustomColors.darkestPurple),
-        subtitle1: const TextStyle(fontSize: 16.0),
-        headline5: TextStyle(fontSize: 25, color: DarkCustomColors.darkestPurple),
-        headline6: TextStyle(fontSize: 30, color: DarkCustomColors.darkestPurple),
-        headline1: TextStyle(fontSize: 20, color: DarkCustomColors.lighterPurple),
+        displayMedium: TextStyle(fontSize: 27.0, color: DarkCustomColors.darkestPurple),
+        bodyLarge: TextStyle(fontSize: 20, color: DarkCustomColors.darkestPurple),
+        bodyMedium: TextStyle(fontSize: 12.0, color: DarkCustomColors.darkestPurple),
+        displaySmall: TextStyle(fontSize: 20, color: DarkCustomColors.lighterPurple),
+        labelMedium: TextStyle(fontSize: 18.0, color: DarkCustomColors.darkestPurple),
+        headlineMedium: TextStyle(fontSize: 17.0, color: DarkCustomColors.darkestPurple),
+        labelLarge: const TextStyle(fontSize: 16.0),
+        headlineSmall: TextStyle(fontSize: 25, color: DarkCustomColors.darkestPurple),
+        titleLarge: TextStyle(fontSize: 30, color: DarkCustomColors.darkestPurple),
+        displayLarge: TextStyle(fontSize: 20, color: DarkCustomColors.lighterPurple),
       ),
       tabBarTheme: TabBarTheme(
         labelStyle: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: DarkCustomColors.lighterPurple),

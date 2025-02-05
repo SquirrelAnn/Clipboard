@@ -1,6 +1,8 @@
+import 'package:clipboard/models/category.dart';
 import 'package:flutter/material.dart';
 
 import '../theme/dark_theme.dart';
+import 'package:uuid/uuid.dart';
 
 class AlertWidgets {
   static showDecisionDialog(BuildContext context, int index, Function function) {
@@ -22,11 +24,11 @@ class AlertWidgets {
     AlertDialog alert = AlertDialog(
       title: Text(
         "Warning",
-        style: CustomDarkTheme.darkTheme.textTheme.bodyText2,
+        style: CustomDarkTheme.darkTheme.textTheme.bodyMedium,
       ),
       content: Text(
         "Delete category?",
-        style: CustomDarkTheme.darkTheme.textTheme.bodyText2,
+        style: CustomDarkTheme.darkTheme.textTheme.bodyMedium,
       ),
       actions: [
         cancelButton,
@@ -44,8 +46,8 @@ class AlertWidgets {
   }
 
   static showNumTxtDlg(String title, Function setValue, BuildContext context) {
-    TextEditingController _controller = TextEditingController();
-    String text = "";
+    TextEditingController _controllerTitle = TextEditingController();
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -54,7 +56,7 @@ class AlertWidgets {
         return AlertDialog(
           title: Text(
             title,
-            style: CustomDarkTheme.darkTheme.textTheme.bodyText2,
+            style: CustomDarkTheme.darkTheme.textTheme.bodyMedium,
           ),
           content: Column(
             children: [
@@ -83,10 +85,87 @@ class AlertWidgets {
               //Expanded(
               // child:
               TextField(
+                // title
                 keyboardType: TextInputType.multiline,
                 autofocus: true,
-                controller: _controller,
-                style: CustomDarkTheme.darkTheme.textTheme.bodyText2,
+                controller: _controllerTitle,
+                style: CustomDarkTheme.darkTheme.textTheme.bodyMedium,
+              ),
+
+              //),
+              //  ],
+              //)
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("OK"),
+              onPressed: () {
+                Navigator.pop(context, [_controllerTitle.text.toString()]);
+              },
+            )
+          ],
+        );
+      },
+    ).then((val) {
+      List<String> list = val;
+      String joined = list.join('\n');
+      setValue(joined);
+    });
+  }
+
+  static showNumTxtDlgSnippet(String title, Function setValue, BuildContext context) {
+    TextEditingController _controllerTitle = TextEditingController();
+    TextEditingController _controllerText = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // _controller.text = "";
+        // _controller.selection = TextSelection(baseOffset: 0, extentOffset: _controller.text.length);
+        return AlertDialog(
+          title: Text(
+            title,
+            style: CustomDarkTheme.darkTheme.textTheme.bodyMedium,
+          ),
+          content: Column(
+            children: [
+              // Expanded(
+              //   child: Container(
+              //     padding: EdgeInsets.all(4),
+              //     decoration: BoxDecoration(
+              //         borderRadius: BorderRadius.all(Radius.circular(10)),
+              //         border: Border.all(color: CustomDarkTheme.darkTheme.canvasColor),
+              //         color: CustomDarkTheme.darkTheme.canvasColor),
+              //     child: Padding(
+              //       padding: EdgeInsets.all(4),
+              //       child: TextField(
+              //         controller: _controller,
+              //         keyboardType: TextInputType.multiline,
+              //         maxLines: null,
+              //         onChanged: (value) {
+              //           text = value;
+              //         },
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              //Row(
+              //  children: [
+              //Expanded(
+              // child:
+              TextField(
+                // title
+                keyboardType: TextInputType.multiline,
+                autofocus: true,
+                controller: _controllerTitle,
+                style: CustomDarkTheme.darkTheme.textTheme.bodyMedium,
+              ),
+              TextField(
+                // text
+                keyboardType: TextInputType.multiline,
+                autofocus: true,
+                controller: _controllerText,
+                style: CustomDarkTheme.darkTheme.textTheme.bodyMedium,
               ),
               //),
               //  ],
@@ -97,14 +176,19 @@ class AlertWidgets {
             TextButton(
               child: const Text("OK"),
               onPressed: () {
-                Navigator.pop(context, _controller.text);
+                Navigator.pop(context, [_controllerTitle.text, _controllerText.text]);
               },
             )
           ],
         );
       },
     ).then((val) {
-      setValue(val);
+      //expect a snippet in return
+      List<String> list = val;
+      var uuid = const Uuid();
+      var v1 = uuid.v1();
+      Snippet snippet = Snippet(id: v1, snippetText: list[1], snippetTitle: list[0]);
+      setValue(snippet);
     });
   }
 }

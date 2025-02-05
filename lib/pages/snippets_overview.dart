@@ -49,11 +49,11 @@ class _SnippetsOverviewState extends State<SnippetsOverview> {
                           child: TextButton(
                             child: RichText(
                               text: TextSpan(
-                                text: widget.category.snippets[index],
+                                text: widget.category.snippets[index].snippetText,
                               ),
                             ),
                             onPressed: () {
-                              Clipboard.setData(ClipboardData(text: widget.category.snippets[index]));
+                              Clipboard.setData(ClipboardData(text: widget.category.snippets[index].snippetText));
                             },
                           ),
                         ),
@@ -75,10 +75,10 @@ class _SnippetsOverviewState extends State<SnippetsOverview> {
   }
 
   showAlertDialog() {
-    AlertWidgets.showNumTxtDlg("Add new snippet", setValue, context);
+    AlertWidgets.showNumTxtDlgSnippet("Add new snippet", setValue, context);
   }
 
-  setValue(String val) {
+  setValue(Snippet val) {
     widget.category.snippets.add(val);
     widget.saveCategories();
   }

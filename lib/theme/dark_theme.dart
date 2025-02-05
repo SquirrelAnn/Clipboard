@@ -5,7 +5,8 @@ import 'darkcolors.dart';
 class CustomDarkTheme {
   static ThemeData get darkTheme {
     return ThemeData(
-      backgroundColor: DarkCustomColors.lightPurple,
+      // backgroundColor: DarkCustomColors.lightPurple,
+
       primaryColor: DarkCustomColors.purple,
       unselectedWidgetColor: DarkCustomColors.darkPurple,
       scaffoldBackgroundColor: DarkCustomColors.white,

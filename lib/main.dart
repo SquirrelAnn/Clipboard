@@ -30,6 +30,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   List<Category> categories = <Category>[];
+  bool flag = true;
 
   @override
   void initState() {
@@ -42,6 +43,7 @@ class _MyAppState extends State<MyApp> {
     await categoriesRepository.readCategoryDatabase();
     setState(() {
       categories = categoriesRepository.getCategories();
+      
     });
   }
 
