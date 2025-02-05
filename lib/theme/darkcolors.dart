@@ -29,4 +29,5 @@ class DarkCustomColors {
   static Color flash = Colors.amber;
 
   static Color btnHighlighted = const Color.fromARGB(255, 134, 35, 226);
+  static Color btnHovered = const Color.fromARGB(255, 157, 124, 185);
 }

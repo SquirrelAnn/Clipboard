@@ -21,6 +21,8 @@ class CategoriesOverview extends StatefulWidget {
 
 class _CategoriesOverviewState extends State<CategoriesOverview> {
   int catIndex = 0;
+  int hoveredIndex = -1; // Track the hovered index for categories
+  int hoveredSnippetIndex = -1; // Track hovered index for snippets
 
   @override
   Widget build(BuildContext context) {
@@ -43,16 +45,50 @@ class _CategoriesOverviewState extends State<CategoriesOverview> {
                           flex: 2,
                           child: Padding(
                             padding: const EdgeInsets.only(left: 10, top: 4),
-                            child: TextButton(
-                              style: index == catIndex
-                                  ? CustomLightTheme.lightTheme.textButtonTheme.style
-                                  : CustomDarkTheme.darkTheme.textButtonTheme.style,
-                              child: Text(widget.categories[index].name),
-                              onPressed: () async {
+                            child: MouseRegion(
+                              // Wrap with MouseRegion
+                              onHover: (PointerHoverEvent event) {
                                 setState(() {
-                                  catIndex = index;
+                                  hoveredIndex = index;
                                 });
                               },
+                              onExit: (PointerExitEvent event) {
+                                setState(() {
+                                  hoveredIndex = -1;
+                                });
+                              },
+                              child: TextButton(
+                                style: ButtonStyle(
+                                  backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+                                    if (states.contains(WidgetState.hovered)) {
+                                      return CustomDarkTheme.darkTheme.cardColor;
+                                    }
+                                    return index == catIndex
+                                        ? CustomLightTheme.lightTheme.textButtonTheme.style?.backgroundColor
+                                                ?.resolve(states) ??
+                                            Colors.grey // Selected background color
+                                        : CustomDarkTheme.darkTheme.textButtonTheme.style?.backgroundColor
+                                                ?.resolve(states) ??
+                                            Colors.transparent; // Default background color (transparent)
+                                  }),
+                                  foregroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+                                    //Keep the original foreGroundColor logic
+                                    return index == catIndex
+                                        ? CustomLightTheme.lightTheme.textButtonTheme.style?.foregroundColor
+                                                ?.resolve(states) ??
+                                            Colors.black // Selected color
+                                        : CustomDarkTheme.darkTheme.textButtonTheme.style?.foregroundColor
+                                                ?.resolve(states) ??
+                                            Colors.white; // Default color
+                                  }),
+                                ),
+                                child: Text(widget.categories[index].name),
+                                onPressed: () {
+                                  setState(() {
+                                    catIndex = index;
+                                  });
+                                },
+                              ),
                             ),
                           ),
                         ),
