@@ -128,6 +128,7 @@ class AlertWidgets {
             style: CustomDarkTheme.darkTheme.textTheme.bodyMedium,
           ),
           content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Expanded(
               //   child: Container(
@@ -153,15 +154,23 @@ class AlertWidgets {
               //  children: [
               //Expanded(
               // child:
+              Text("Title:"),
               TextField(
                 // title
+                decoration: InputDecoration(
+                  hintText: 'Title',
+                ),
                 keyboardType: TextInputType.multiline,
                 autofocus: true,
                 controller: _controllerTitle,
                 style: CustomDarkTheme.darkTheme.textTheme.bodyMedium,
               ),
+              Text("Value:"),
               TextField(
                 // text
+                decoration: InputDecoration(
+                  hintText: 'Value',
+                ),
                 keyboardType: TextInputType.multiline,
                 autofocus: true,
                 controller: _controllerText,
