@@ -29,37 +29,44 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  List<Category> categories = <Category>[];
+  late Future<List<Category>> _categoriesFuture;
   bool flag = true;
 
   @override
   void initState() {
     super.initState();
-    loadCategories();
+    _categoriesFuture = categoriesRepository.readCategoryDatabase();
   }
 
   CategoriesRepository categoriesRepository = CategoriesRepository();
-  loadCategories() async {
-    await categoriesRepository.readCategoryDatabase();
-    setState(() {
-      categories = categoriesRepository.getCategories();
-      
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: CustomDarkTheme.darkTheme,
-      home: CategoriesOverview(categories: categories, saveCategories: saveCategories),
+      home: FutureBuilder<List<Category>>(
+        future: _categoriesFuture, // The Future we're waiting for
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator()); // Show a loading indicator
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}')); // Handle errors
+          } else {
+            List<Category> categories = snapshot.data!; // Data is available
+            return CategoriesOverview(
+              categories: categories,
+              saveCategories: saveCategories,
+            );
+          }
+        },
+      ),
     );
   }
 
-  saveCategories() async {
-    await categoriesRepository.saveCategories();
-    setState(() {
-      categories = categoriesRepository.getCategories();
-    });
-  }
+  Future<void> saveCategories() async {
+  await categoriesRepository.saveCategories();
+  //_categoriesFuture = categoriesRepository.readCategoryDatabase(); // Refresh the Future
+  setState(() {}); // Trigger a rebuild
+}
 }

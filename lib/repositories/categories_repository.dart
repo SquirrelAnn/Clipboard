@@ -1,38 +1,46 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:clipboard/models/category.dart';
 import 'package:path_provider/path_provider.dart';
-
 import 'package:uuid/uuid.dart';
 
 class CategoriesRepository {
-  readCategoryDatabase() async {
+  List<Category> _categories = []; // Private list
+
+  Future<List<Category>> readCategoryDatabase() async {
     var file = await _localFile;
 
     if (!file.existsSync()) {
-      List<Category> cats = <Category>[];
-      List<Snippet> testSnippets = [];
-      var uuid = const Uuid();
-      var v1 = uuid.v1();
-      Snippet snippet =
-          Snippet(id: v1, snippetText: "snippet text", snippetTitle: "snippet title"); // Named parameters!
-      testSnippets.add(snippet);
-      var cuuid = const Uuid();
-      var cv1 = cuuid.v1();
-      Category category = Category(id: cv1, name: "Category", snippets: testSnippets); // Named parameters!
-
-      cats.add(category);
-      String jsonTags = jsonEncode(cats);
-      await file.writeAsString(jsonTags);
+      // Initialize with default data *and* update _categories
+      _categories = _createInitialCategories(); // Use a helper function
+      await saveCategories(); // Save the initial data
+    } else {
+      _categories = await readJson(file); // Load from file and update _categories
     }
 
-    await readJson(file);
+    return _categories; // Return the updated list
   }
 
-  saveCategories() async {
+  List<Category> _createInitialCategories() {
+    List<Category> cats = <Category>[];
+    List<Snippet> testSnippets = [];
+    var uuid = const Uuid();
+    var v1 = uuid.v1();
+    Snippet snippet = Snippet(
+        id: v1, snippetText: "snippet text", snippetTitle: "snippet title");
+    testSnippets.add(snippet);
+    var cuuid = const Uuid();
+    var cv1 = cuuid.v1();
+    Category category =
+        Category(id: cv1, name: "Category", snippets: testSnippets);
+    cats.add(category);
+    return cats;
+  }
+
+
+  Future<void> saveCategories() async {
     var file = await _localFile;
-    String jsonTags = jsonEncode(categories);
+    String jsonTags = jsonEncode(_categories); // Encode the correct list
     await file.writeAsString(jsonTags);
   }
 
@@ -43,20 +51,21 @@ class CategoriesRepository {
 
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
-
     return directory.path;
   }
 
-  static List<Category> categories = <Category>[];
-  Map<String, dynamic> map = {};
-
-  getCategories() {
-    return categories;
+  List<Category> getCategories() {
+    return _categories; // Return the private list
   }
 
-  static readJson(File file) async {
-    final String jsonString = await file.readAsString();
-    List<dynamic> jsonList = jsonDecode(jsonString);
-    List<Category> categories = jsonList.map((json) => Category.fromJson(json)).toList();
+  Future<List<Category>> readJson(File file) async {
+    try {
+      String jsonString = await file.readAsString();
+      List<dynamic> jsonList = jsonDecode(jsonString);
+      return jsonList.map((json) => Category.fromJson(json)).toList();
+    } catch (e) {
+      print('Error reading or parsing JSON: $e');
+      return [];
+    }
   }
 }
