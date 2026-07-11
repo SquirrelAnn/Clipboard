@@ -3,95 +3,156 @@ import 'package:flutter/material.dart';
 import 'darkcolors.dart';
 
 class CustomDarkTheme {
+  static const Color _surface = Color(0xFF2B2B2B);
+  static const Color _surfaceHigh = Color(0xFF383838);
+  static const Color _surfaceLow = Color(0xFF1E1E1E);
+  static const Color _onSurface = Color(0xFFF2F2F2);
+  static const Color _onSurfaceMuted = Color(0xFFB8B8B8);
+  static const Color _outline = Color(0xFF707070);
+
   static ThemeData get darkTheme {
+    final colorScheme = ColorScheme.dark(
+      primary: DarkCustomColors.btnHighlighted,
+      onPrimary: Colors.white,
+      secondary: DarkCustomColors.btnHovered,
+      onSecondary: Colors.white,
+      surface: _surface,
+      onSurface: _onSurface,
+      surfaceContainerHighest: _surfaceHigh,
+      surfaceContainerLow: _surfaceLow,
+      outline: _outline,
+      error: DarkCustomColors.red,
+      onError: Colors.white,
+    );
+
     return ThemeData(
-      // backgroundColor: DarkCustomColors.lightPurple,
-      cardColor: DarkCustomColors.btnHovered,
-      primaryColor: DarkCustomColors.purple,
-      unselectedWidgetColor: DarkCustomColors.darkPurple,
-      scaffoldBackgroundColor: DarkCustomColors.white,
-      fontFamily: 'Karla',
-      hoverColor: DarkCustomColors.transparent,
-      canvasColor: DarkCustomColors.lighterPurpleTransp,
-      focusColor: DarkCustomColors.flash,
-      colorScheme: ColorScheme(
-        primary: DarkCustomColors.lightPurple,
-        onPrimary: DarkCustomColors.darkestPurple,
-        background: DarkCustomColors.lighterPurple,
-        onBackground: DarkCustomColors.purple,
-        inversePrimary: DarkCustomColors.darkPurple,
-        secondary: DarkCustomColors.midpurple,
-        onSecondary: DarkCustomColors.white,
-        errorContainer: DarkCustomColors.green,
-        error: DarkCustomColors.red,
-        onError: DarkCustomColors.white,
-        surface: DarkCustomColors.white,
-        onSurface: DarkCustomColors.darkGray,
-        inverseSurface: DarkCustomColors.black,
-        brightness: Brightness.light,
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      colorScheme: colorScheme,
+      scaffoldBackgroundColor: _surfaceLow,
+      cardColor: _surfaceHigh,
+      canvasColor: _surfaceHigh,
+      iconTheme: const IconThemeData(color: _onSurface),
+      dialogTheme: DialogThemeData(
+        backgroundColor: _surfaceHigh,
+        surfaceTintColor: Colors.transparent,
+        titleTextStyle: const TextStyle(
+          color: _onSurface,
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+        ),
+        contentTextStyle: const TextStyle(
+          color: _onSurface,
+          fontSize: 14,
+        ),
       ),
-      iconTheme: IconThemeData(color: DarkCustomColors.lightPurple),
-      buttonTheme: ButtonThemeData(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
-          buttonColor: DarkCustomColors.lightPurple),
-      elevatedButtonTheme: ElevatedButtonThemeData(
+      textTheme: const TextTheme(
+        bodyLarge: TextStyle(fontSize: 16, color: _onSurface),
+        bodyMedium: TextStyle(fontSize: 14, color: _onSurface),
+        bodySmall: TextStyle(fontSize: 12, color: _onSurfaceMuted),
+        titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: _onSurface),
+        titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: _onSurface),
+        labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: _onSurface),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: _surfaceLow,
+        hintStyle: const TextStyle(color: _onSurfaceMuted),
+        labelStyle: const TextStyle(color: _onSurfaceMuted),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: _outline),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: DarkCustomColors.btnHighlighted, width: 2),
+        ),
+      ),
+      segmentedButtonTheme: SegmentedButtonThemeData(
         style: ButtonStyle(
-          foregroundColor: WidgetStateProperty.all<Color>(DarkCustomColors.darkestPurple),
-          backgroundColor: WidgetStateProperty.all<Color>(DarkCustomColors.lightPurple),
-          overlayColor: WidgetStateProperty.resolveWith<Color>(
-            (Set<WidgetState> states) {
-              if (states.contains(WidgetState.hovered)) return DarkCustomColors.purple.withOpacity(0.04);
-              if (states.contains(WidgetState.focused) || states.contains(WidgetState.pressed)) {
-                return DarkCustomColors.purple.withOpacity(0.12);
-              }
-              return DarkCustomColors.purple; // Defer to the widget's default.
-            },
-          ),
+          foregroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return Colors.white;
+            }
+            if (states.contains(WidgetState.disabled)) {
+              return _onSurfaceMuted.withValues(alpha: 0.5);
+            }
+            return _onSurfaceMuted;
+          }),
+          backgroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return DarkCustomColors.btnHighlighted;
+            }
+            if (states.contains(WidgetState.disabled)) {
+              return _surfaceLow;
+            }
+            return _surface;
+          }),
+          side: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return BorderSide(color: DarkCustomColors.btnHighlighted);
+            }
+            return const BorderSide(color: _outline);
+          }),
+          iconColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return Colors.white;
+            }
+            return _onSurfaceMuted;
+          }),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: _onSurface,
+          side: const BorderSide(color: _outline),
+          backgroundColor: _surface,
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
-          textStyle:
-              WidgetStateProperty.all<TextStyle>(TextStyle(fontSize: 12.0, color: DarkCustomColors.darkestPurple)),
-          foregroundColor: WidgetStateProperty.all<Color>(DarkCustomColors.darkestPurple),
-          backgroundColor: WidgetStateProperty.all<Color>(DarkCustomColors.lightPurple),
-          overlayColor: WidgetStateProperty.resolveWith<Color>(
-            (Set<WidgetState> states) {
-              if (states.contains(WidgetState.hovered)) return DarkCustomColors.purple.withOpacity(0.04);
-              if (states.contains(WidgetState.focused) || states.contains(WidgetState.pressed)) {
-                return DarkCustomColors.purple;
-              }
-              return DarkCustomColors.purple; // Defer to the widget's default.
-            },
+          foregroundColor: WidgetStateProperty.all(_onSurface),
+          backgroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.hovered) || states.contains(WidgetState.pressed)) {
+              return _surface;
+            }
+            return _surfaceHigh;
+          }),
+          padding: WidgetStateProperty.all(
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          ),
+          shape: WidgetStateProperty.all(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
           ),
         ),
       ),
-      dialogTheme: DialogTheme(backgroundColor: DarkCustomColors.darkPurple),
-      textTheme: TextTheme(
-        displayMedium: TextStyle(fontSize: 27.0, color: DarkCustomColors.darkestPurple),
-        bodyLarge: TextStyle(fontSize: 20, color: DarkCustomColors.darkestPurple),
-        bodyMedium: TextStyle(fontSize: 12.0, color: DarkCustomColors.darkestPurple),
-        displaySmall: TextStyle(fontSize: 20, color: DarkCustomColors.lighterPurple),
-        titleSmall: TextStyle(fontSize: 18.0, color: DarkCustomColors.darkestPurple),
-        headlineMedium: TextStyle(fontSize: 17.0, color: DarkCustomColors.darkestPurple),
-        titleMedium: const TextStyle(fontSize: 16.0),
-        headlineSmall: TextStyle(fontSize: 25, color: DarkCustomColors.darkestPurple),
-        titleLarge: TextStyle(fontSize: 30, color: DarkCustomColors.darkestPurple),
-        displayLarge: TextStyle(fontSize: 20, color: DarkCustomColors.lighterPurple),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white,
+          backgroundColor: DarkCustomColors.btnHighlighted,
+        ),
       ),
-      tabBarTheme: TabBarTheme(
-        labelStyle: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: DarkCustomColors.lighterPurple),
-        unselectedLabelStyle: TextStyle(fontSize: 18.0, color: DarkCustomColors.darkestPurple),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        foregroundColor: Colors.white,
+        backgroundColor: DarkCustomColors.btnHighlighted,
+      ),
+      dividerTheme: DividerThemeData(
+        color: DarkCustomColors.btnHighlighted,
+        thickness: 1,
+      ),
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: _surfaceHigh,
+        contentTextStyle: const TextStyle(color: _onSurface),
+        actionTextColor: DarkCustomColors.btnHighlighted,
       ),
       checkboxTheme: CheckboxThemeData(
-        fillColor: WidgetStateColor.resolveWith(
-          (states) {
-            if (states.contains(WidgetState.selected)) {
-              return DarkCustomColors.midpurple; // the color when checkbox is selected;
-            }
-            return DarkCustomColors.midpurple; //the color when checkbox is unselected;
-          },
-        ),
+        fillColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return DarkCustomColors.btnHighlighted;
+          }
+          return _surfaceHigh;
+        }),
+        checkColor: WidgetStateProperty.all(Colors.white),
       ),
     );
   }

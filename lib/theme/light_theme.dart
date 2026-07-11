@@ -70,7 +70,7 @@ class CustomLightTheme {
           ),
         ),
       ),
-      dialogTheme: DialogTheme(backgroundColor: DarkCustomColors.darkPurple),
+      dialogTheme: DialogThemeData(backgroundColor: DarkCustomColors.darkPurple),
       textTheme: TextTheme(
         displayMedium: TextStyle(fontSize: 27.0, color: DarkCustomColors.darkestPurple),
         bodyLarge: TextStyle(fontSize: 20, color: DarkCustomColors.darkestPurple),
@@ -83,7 +83,7 @@ class CustomLightTheme {
         titleLarge: TextStyle(fontSize: 30, color: DarkCustomColors.darkestPurple),
         displayLarge: TextStyle(fontSize: 20, color: DarkCustomColors.lighterPurple),
       ),
-      tabBarTheme: TabBarTheme(
+      tabBarTheme: TabBarThemeData(
         labelStyle: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: DarkCustomColors.lighterPurple),
         unselectedLabelStyle: TextStyle(fontSize: 18.0, color: DarkCustomColors.darkestPurple),
       ),
