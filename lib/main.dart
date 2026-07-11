@@ -1,5 +1,5 @@
-import 'package:clipboard/models/category.dart';
-import 'package:clipboard/pages/categories_overview.dart';
+import 'package:clipboard/controllers/categories_controller.dart';
+import 'package:clipboard/pages/categories_page.dart';
 import 'package:clipboard/platform/window_setup.dart'
     if (dart.library.io) 'package:clipboard/platform/window_setup_io.dart';
 import 'package:clipboard/repositories/categories_repository.dart';
@@ -21,16 +21,25 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late Future<List<Category>> _categoriesFuture;
-  final CategoriesRepository _categoriesRepository = CategoriesRepository();
-  late final ClipboardService _clipboardService = ClipboardService(
-    imageStorageService: _categoriesRepository.imageStorageService,
-  );
+  late final CategoriesRepository _repository;
+  late final CategoriesController _controller;
+  late final Future<void> _loadFuture;
 
   @override
   void initState() {
     super.initState();
-    _categoriesFuture = _categoriesRepository.readCategoryDatabase();
+    _repository = CategoriesRepository();
+    final clipboardService = ClipboardService(
+      imageStorageService: _repository.imageStorageService,
+    );
+    _controller = CategoriesController(_repository, clipboardService);
+    _loadFuture = _controller.load();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -38,31 +47,29 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Clipboard app',
       theme: CustomDarkTheme.darkTheme,
-      home: FutureBuilder<List<Category>>(
-        future: _categoriesFuture,
+      home: FutureBuilder<void>(
+        future: _loadFuture,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting || _controller.isLoading) {
             return const Scaffold(
               body: Center(child: CircularProgressIndicator()),
             );
           }
-          if (snapshot.hasError) {
+
+          if (_controller.error != null) {
             return Scaffold(
-              body: Center(child: Text('Error: ${snapshot.error}')),
+              body: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text('Error: ${_controller.error}'),
+                ),
+              ),
             );
           }
-          return CategoriesOverview(
-            categories: snapshot.data!,
-            saveCategories: _saveCategories,
-            repository: _categoriesRepository,
-            clipboardService: _clipboardService,
-          );
+
+          return CategoriesPage(controller: _controller);
         },
       ),
     );
-  }
-
-  Future<void> _saveCategories() async {
-    await _categoriesRepository.saveCategories();
   }
 }

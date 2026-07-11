@@ -145,6 +145,11 @@ class CustomDarkTheme {
         contentTextStyle: const TextStyle(color: _onSurface),
         actionTextColor: DarkCustomColors.btnHighlighted,
       ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: _surfaceHigh,
+        foregroundColor: _onSurface,
+        surfaceTintColor: Colors.transparent,
+      ),
       checkboxTheme: CheckboxThemeData(
         fillColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {

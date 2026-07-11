@@ -6,40 +6,88 @@ import 'package:clipboard/services/image_storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
-class AddSnippetDialog extends StatefulWidget {
-  const AddSnippetDialog({
+class SnippetDialog extends StatefulWidget {
+  const SnippetDialog({
     super.key,
     required this.clipboardService,
     required this.imageStorageService,
+    this.existingSnippet,
   });
 
   final ClipboardService clipboardService;
   final ImageStorageService imageStorageService;
+  final Snippet? existingSnippet;
 
-  static Future<Snippet?> show(
+  bool get isEditing => existingSnippet != null;
+
+  static Future<Snippet?> showAdd(
     BuildContext context, {
     required ClipboardService clipboardService,
     required ImageStorageService imageStorageService,
   }) {
     return showDialog<Snippet>(
       context: context,
-      builder: (context) => AddSnippetDialog(
+      builder: (context) => SnippetDialog(
         clipboardService: clipboardService,
         imageStorageService: imageStorageService,
       ),
     );
   }
 
+  static Future<Snippet?> showEdit(
+    BuildContext context, {
+    required ClipboardService clipboardService,
+    required ImageStorageService imageStorageService,
+    required Snippet existingSnippet,
+  }) {
+    return showDialog<Snippet>(
+      context: context,
+      builder: (context) => SnippetDialog(
+        clipboardService: clipboardService,
+        imageStorageService: imageStorageService,
+        existingSnippet: existingSnippet,
+      ),
+    );
+  }
+
   @override
-  State<AddSnippetDialog> createState() => _AddSnippetDialogState();
+  State<SnippetDialog> createState() => _SnippetDialogState();
 }
 
-class _AddSnippetDialogState extends State<AddSnippetDialog> {
-  final _titleController = TextEditingController();
-  final _textController = TextEditingController();
-  bool _isImageMode = false;
+class _SnippetDialogState extends State<SnippetDialog> {
+  late final TextEditingController _titleController;
+  late final TextEditingController _textController;
+  late bool _isImageMode;
   Uint8List? _clipboardImage;
+  Uint8List? _existingImage;
   bool _loadingClipboard = false;
+  bool _loadingExistingImage = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final existing = widget.existingSnippet;
+    _titleController = TextEditingController(text: existing?.snippetTitle ?? '');
+    _textController = TextEditingController(text: existing?.snippetText ?? '');
+    _isImageMode = existing?.type == SnippetType.image;
+
+    if (existing?.type == SnippetType.image && existing?.imagePath != null) {
+      _loadExistingImage(existing!.imagePath!);
+    }
+  }
+
+  Future<void> _loadExistingImage(String imagePath) async {
+    setState(() => _loadingExistingImage = true);
+    try {
+      final bytes = await widget.imageStorageService.loadImage(imagePath);
+      if (!mounted) return;
+      setState(() => _existingImage = bytes);
+    } finally {
+      if (mounted) {
+        setState(() => _loadingExistingImage = false);
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -79,17 +127,28 @@ class _AddSnippetDialogState extends State<AddSnippetDialog> {
       return;
     }
 
-    const uuid = Uuid();
-    final id = uuid.v1();
+    final existing = widget.existingSnippet;
+    final id = existing?.id ?? const Uuid().v1();
 
     if (_isImageMode) {
-      if (_clipboardImage == null) {
+      final imageBytes = _clipboardImage ?? _existingImage;
+      if (imageBytes == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Paste an image from the clipboard first.')),
         );
         return;
       }
-      final imagePath = await widget.imageStorageService.saveImage(_clipboardImage!, id);
+
+      String imagePath;
+      if (_clipboardImage != null || existing?.imagePath == null) {
+        if (existing?.imagePath != null && _clipboardImage != null) {
+          await widget.imageStorageService.deleteImage(existing!.imagePath!);
+        }
+        imagePath = await widget.imageStorageService.saveImage(imageBytes, id);
+      } else {
+        imagePath = existing!.imagePath!;
+      }
+
       if (!mounted) return;
       Navigator.pop(
         context,
@@ -106,6 +165,10 @@ class _AddSnippetDialogState extends State<AddSnippetDialog> {
       return;
     }
 
+    if (existing?.type == SnippetType.image && existing?.imagePath != null) {
+      await widget.imageStorageService.deleteImage(existing!.imagePath!);
+    }
+
     Navigator.pop(
       context,
       Snippet.text(id: id, snippetTitle: title, snippetText: text),
@@ -115,9 +178,13 @@ class _AddSnippetDialogState extends State<AddSnippetDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final canSwitchType = !widget.isEditing;
 
     return AlertDialog(
-      title: Text('Add new snippet', style: theme.dialogTheme.titleTextStyle),
+      title: Text(
+        widget.isEditing ? 'Edit snippet' : 'Add new snippet',
+        style: theme.dialogTheme.titleTextStyle,
+      ),
       content: SizedBox(
         width: 420,
         child: Column(
@@ -130,17 +197,19 @@ class _AddSnippetDialogState extends State<AddSnippetDialog> {
               decoration: const InputDecoration(hintText: 'Title'),
               style: theme.textTheme.bodyMedium,
             ),
-            const SizedBox(height: 12),
-            SegmentedButton<bool>(
-              segments: const [
-                ButtonSegment(value: false, label: Text('Text'), icon: Icon(Icons.text_fields)),
-                ButtonSegment(value: true, label: Text('Screenshot'), icon: Icon(Icons.image)),
-              ],
-              selected: {_isImageMode},
-              onSelectionChanged: (selection) {
-                setState(() => _isImageMode = selection.first);
-              },
-            ),
+            if (canSwitchType) ...[
+              const SizedBox(height: 12),
+              SegmentedButton<bool>(
+                segments: const [
+                  ButtonSegment(value: false, label: Text('Text'), icon: Icon(Icons.text_fields)),
+                  ButtonSegment(value: true, label: Text('Screenshot'), icon: Icon(Icons.image)),
+                ],
+                selected: {_isImageMode},
+                onSelectionChanged: (selection) {
+                  setState(() => _isImageMode = selection.first);
+                },
+              ),
+            ],
             const SizedBox(height: 12),
             if (_isImageMode) ...[
               OutlinedButton.icon(
@@ -155,14 +224,19 @@ class _AddSnippetDialogState extends State<AddSnippetDialog> {
                         ),
                       )
                     : const Icon(Icons.content_paste),
-                label: const Text('Paste from clipboard'),
+                label: Text(widget.isEditing ? 'Replace from clipboard' : 'Paste from clipboard'),
               ),
-              if (_clipboardImage != null) ...[
+              if (_loadingExistingImage)
+                const Padding(
+                  padding: EdgeInsets.only(top: 8),
+                  child: LinearProgressIndicator(),
+                ),
+              if (_clipboardImage != null || _existingImage != null) ...[
                 const SizedBox(height: 8),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image.memory(
-                    _clipboardImage!,
+                    _clipboardImage ?? _existingImage!,
                     height: 120,
                     fit: BoxFit.contain,
                   ),

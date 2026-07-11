@@ -15,6 +15,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   path: ^1.9.0
   path_provider: ^2.0.12
+  file_picker: ^8.1.7
   super_clipboard: ^0.9.1
   uuid: ^4.5.1
   bitsdojo_window: ^0.1.5
