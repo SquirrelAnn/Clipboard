@@ -18,10 +18,27 @@ class ImageStorageService {
     return dir.path;
   }
 
+  Future<String> get _recentImagesDirectory async {
+    final base = _basePath ?? (await getApplicationDocumentsDirectory()).path;
+    final dir = Directory(p.join(base, 'recent_images'));
+    if (!dir.existsSync()) {
+      await dir.create(recursive: true);
+    }
+    return dir.path;
+  }
+
   Future<String> saveImage(Uint8List bytes, String snippetId) async {
     final dir = await _imagesDirectory;
     final relativePath = p.join('images', '$snippetId.png');
     final file = File(p.join(dir, '$snippetId.png'));
+    await file.writeAsBytes(bytes);
+    return relativePath;
+  }
+
+  Future<String> saveRecentImage(Uint8List bytes, String itemId) async {
+    final dir = await _recentImagesDirectory;
+    final relativePath = p.join('recent_images', '$itemId.png');
+    final file = File(p.join(dir, '$itemId.png'));
     await file.writeAsBytes(bytes);
     return relativePath;
   }

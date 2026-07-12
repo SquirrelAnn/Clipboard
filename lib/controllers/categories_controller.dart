@@ -74,6 +74,11 @@ class CategoriesController extends ChangeNotifier {
     }
   }
 
+  void refreshFromRepository() {
+    _refreshFromRepository();
+    notifyListeners();
+  }
+
   void setSearchQuery(String query) {
     if (_searchQuery == query) {
       return;
